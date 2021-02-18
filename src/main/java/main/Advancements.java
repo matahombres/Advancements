@@ -62,7 +62,7 @@ public class Advancements extends PlaceholderExpansion{
      */
     @Override
     public String getVersion(){
-        return "1.1";
+        return "1.2";
     }
     
     
@@ -150,8 +150,8 @@ public class Advancements extends PlaceholderExpansion{
                     }
                     i++;
                 }
-                boolean hadv=hasAdvancement(Bukkit.getPlayer(p.getUniqueId()),id);
-                if(hadv==false){
+                Boolean hadv=hasAdvancement(Bukkit.getPlayer(p.getUniqueId()),id);
+                if(hadv==null){
                     return "NO_EXIST_ADVANCEMENT";
                 }
                 return String.valueOf(hadv);
@@ -206,8 +206,8 @@ public class Advancements extends PlaceholderExpansion{
                     return String.valueOf(amount);
                 }
             }else{
-                boolean hadv=hasAdvancement((Player)player,identifier);
-                if(hadv==false){
+                Boolean hadv=hasAdvancement((Player)player,identifier);
+                if(hadv==null){
                     return "NO_EXIST_ADVANCEMENT";
                 }
                 return String.valueOf(hadv);
@@ -351,11 +351,11 @@ public class Advancements extends PlaceholderExpansion{
         return listAdvan.replaceAll(",", "\n").replaceAll(";", ": ").replaceAll("true", ChatColor.GREEN+"true"+ChatColor.RESET).replaceAll("false", ChatColor.RED+"false"+ChatColor.RESET);
     }
     //Check if player have advancement
-    public static boolean hasAdvancement(Player player, String achname) throws NoPlayerOnline{
+    public static Boolean hasAdvancement(Player player, String achname) throws NoPlayerOnline{
         Advancement ach = null;
         for (Iterator<Advancement> iter = Bukkit.getServer().advancementIterator(); iter.hasNext(); ) {
             Advancement adv = iter.next();
-            if (adv.getKey().getKey().equalsIgnoreCase(achname)){
+            if (adv.getKey().getKey().trim().equalsIgnoreCase(achname.trim())){
                 ach = adv;
                 break;
             }
@@ -367,7 +367,7 @@ public class Advancements extends PlaceholderExpansion{
         try{
             prog = player.getAdvancementProgress(ach);
         }catch(IllegalArgumentException e){
-            return false;
+            return null;
         }
         return prog.isDone();
     }

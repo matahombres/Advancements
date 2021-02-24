@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.OfflinePlayer;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.Bukkit;
@@ -104,6 +105,9 @@ public class Advancements extends PlaceholderExpansion{
                         command="/"+args[1];
                     }
                     String plName=args[0].trim();
+                    if(checkIsPlaceholder(plName)){
+                        plName=parsePlaceholder(plName,player);
+                    }
                     OfflinePlayer p=getOfflinePlayer(plName,false);
                     if(!checkPlayerFound(plName,player,p)){
                         return "PLAYER_NOT_FOUND";
@@ -114,6 +118,9 @@ public class Advancements extends PlaceholderExpansion{
                     return "";
                 }else{
                     String plName=iden_new.trim();
+                    if(checkIsPlaceholder(plName)){
+                        plName=parsePlaceholder(plName,player);
+                    }
                     OfflinePlayer p=getOfflinePlayer(plName,false);
                     if(!checkPlayerFound(plName,player,p)){
                         return "PLAYER_NOT_FOUND";
@@ -124,6 +131,9 @@ public class Advancements extends PlaceholderExpansion{
             }else if(identifier.startsWith("playerListFormat_")){
                 String iden_new=identifier.split("playerListFormat_")[1];
                 String plName=iden_new.trim();
+                if(checkIsPlaceholder(plName)){
+                    plName=parsePlaceholder(plName,player);
+                }
                 OfflinePlayer p=getOfflinePlayer(plName,false);
                 if(!checkPlayerFound(plName,player,p)){
                     return "PLAYER_NOT_FOUND";
@@ -134,6 +144,9 @@ public class Advancements extends PlaceholderExpansion{
                 String iden_new=identifier.split("player_")[1];
                 String[] arr=iden_new.split(";");
                 String plName=arr[0];
+                if(checkIsPlaceholder(plName)){
+                    plName=parsePlaceholder(plName,player);
+                }
                 OfflinePlayer p=getOfflinePlayer(plName,false);
                 if(!checkPlayerFound(plName,player,p)){
                     return "PLAYER_NOT_FOUND";
@@ -161,6 +174,9 @@ public class Advancements extends PlaceholderExpansion{
                     String[] args=iden_new.split(",");
                     String category=args[1];
                     String plName=args[0].trim();
+                    if(checkIsPlaceholder(plName)){
+                        plName=parsePlaceholder(plName,player);
+                    }
                     OfflinePlayer p=getOfflinePlayer(plName,false);
                     if(!checkPlayerFound(plName,player,p)){
                         return "PLAYER_NOT_FOUND";
@@ -173,6 +189,9 @@ public class Advancements extends PlaceholderExpansion{
                     }
                 }else{
                     String plName=iden_new.trim();
+                    if(checkIsPlaceholder(plName)){
+                        plName=parsePlaceholder(plName,player);
+                    }
                     OfflinePlayer p=getOfflinePlayer(plName,false);
                     if(!checkPlayerFound(plName,player,p)){
                         return "PLAYER_NOT_FOUND";
@@ -186,6 +205,9 @@ public class Advancements extends PlaceholderExpansion{
                     String[] args=iden_new.split(",");
                     String category=args[1];
                     String plName=args[0].trim();
+                    if(checkIsPlaceholder(plName)){
+                        plName=parsePlaceholder(plName,player);
+                    }
                     OfflinePlayer p=getOfflinePlayer(plName,false);
                     if(!checkPlayerFound(plName,player,p)){
                         return "PLAYER_NOT_FOUND";
@@ -198,6 +220,9 @@ public class Advancements extends PlaceholderExpansion{
                     }
                 }else{
                     String plName=iden_new.trim();
+                    if(checkIsPlaceholder(plName)){
+                        plName=parsePlaceholder(plName,player);
+                    }
                     OfflinePlayer p=getOfflinePlayer(plName,false);
                     if(!checkPlayerFound(plName,player,p)){
                         return "PLAYER_NOT_FOUND";
@@ -220,6 +245,13 @@ public class Advancements extends PlaceholderExpansion{
         }
         // PlaceholderAPI return null if an invalid placeholder (f.e. %example_placeholder3%) 
         
+    }
+    public static boolean checkIsPlaceholder(String name){
+        return name.startsWith("{")&&name.endsWith("}");
+    }
+    public static String parsePlaceholder(String placeholder,OfflinePlayer player){
+        String place=placeholder.replaceAll("\\{","%").replaceAll("\\}","%");
+        return PlaceholderAPI.setPlaceholders(player, place);
     }
     //Return list advancements order by categories/type advancements
     public static List<String> getAdvancements(){

@@ -1,6 +1,10 @@
 # Advancements
 Advancements Placeholder for [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/) plugin
 
+## Discord
+
+If you see that I do not answer, contact me through my [discord server](https://discord.com/invite/WnfvECZ). I normally pay more attention to discord than github
+
 ## Placeholders
 * %Advancements_<advancement>%
   

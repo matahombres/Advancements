@@ -63,7 +63,7 @@ public class Advancements extends PlaceholderExpansion{
      */
     @Override
     public String getVersion(){
-        return "1.3";
+        return "1.4";
     }
     
     
@@ -88,20 +88,52 @@ public class Advancements extends PlaceholderExpansion{
     public String onRequest(final OfflinePlayer player, final String identifier){
         try{
             //%Advancements_<advancement>%
+            //%Advancements_list%
+            //%Advancements_list_<command>%
+            //%Advancements_listFormat%
             //%Advancements_player_<player>;<advancement>%
             //%Advancements_playerList_<player>%
             //%Advancements_playerList_<player>,<command>%
             //%Advancements_playerListFormat_<player>%
-            //%Advancements_completedAmount_<player>%
-            //%Advancements_completedAmount_<player>,<category>%
-            //%Advancements_remainingAmount_<player>%
-            //%Advancements_remainingAmount_<player>,<category>%
-            if(identifier.startsWith("playerList_")){
-                String iden_new=identifier.split("playerList_")[1];
+            //%Advancements_completedAmount%
+            //%Advancements_completedAmount_<category>%
+            //%Advancements_playerCompletedAmount_<player>%
+            //%Advancements_playerCompletedAmount_<player>,<category>%
+            //%Advancements_remainingAmount%
+            //%Advancements_remainingAmount_<category>%
+            //%Advancements_playerRemainingAmount_<player>%
+            //%Advancements_playerRemainingAmount_<player>,<category>%
+            if(identifier.toLowerCase().startsWith("listformat")){
+                String abc=formating(listAdvancements(Bukkit.getPlayer(player.getUniqueId())));
+                return abc;
+            }
+            else if(identifier.toLowerCase().startsWith("list")){
+                String iden_new="";
+                boolean alone=true;
+                if(identifier.toLowerCase().startsWith("list_")){
+                    iden_new=identifier.split("(?i)list_")[1];
+                    alone=false;
+                }
+                if(alone){
+                    String abc=listAdvancements(Bukkit.getPlayer(player.getUniqueId()));
+                    return abc;
+                }else{
+                    String command=iden_new;
+                    if(!command.toLowerCase().startsWith("/")){
+                        command="/"+iden_new;
+                    }
+                    Player sender=(Player) player;
+                    String abc=listAdvancements(Bukkit.getPlayer(player.getUniqueId()));
+                    sender.chat(command+" "+abc);
+                    return "";
+                }
+            }
+            else if(identifier.toLowerCase().startsWith("playerlist_")){
+                String iden_new=identifier.split("(?i)playerList_")[1];
                 if(iden_new.contains(",")){
                     String[] args=iden_new.split(",");
                     String command=args[1];
-                    if(!command.startsWith("/")){
+                    if(!command.toLowerCase().startsWith("/")){
                         command="/"+args[1];
                     }
                     String plName=args[0].trim();
@@ -128,8 +160,9 @@ public class Advancements extends PlaceholderExpansion{
                     String abc=listAdvancements(Bukkit.getPlayer(p.getUniqueId()));
                     return abc;
                 }
-            }else if(identifier.startsWith("playerListFormat_")){
-                String iden_new=identifier.split("playerListFormat_")[1];
+            }
+            else if(identifier.toLowerCase().startsWith("playerlistformat_")){
+                String iden_new=identifier.split("(?i)playerListFormat_")[1];
                 String plName=iden_new.trim();
                 if(checkIsPlaceholder(plName)){
                     plName=parsePlaceholder(plName,player);
@@ -140,8 +173,9 @@ public class Advancements extends PlaceholderExpansion{
                 }
                 String abc=formating(listAdvancements(Bukkit.getPlayer(p.getUniqueId())));
                 return abc;
-            }else if(identifier.startsWith("player_")){
-                String iden_new=identifier.split("player_")[1];
+            }
+            else if(identifier.toLowerCase().startsWith("player_")){
+                String iden_new=identifier.split("(?i)player_")[1];
                 String[] arr=iden_new.split(";");
                 String plName=arr[0];
                 if(checkIsPlaceholder(plName)){
@@ -168,8 +202,9 @@ public class Advancements extends PlaceholderExpansion{
                     return "NO_EXIST_ADVANCEMENT";
                 }
                 return String.valueOf(hadv);
-            }else if(identifier.startsWith("completedAmount_")){
-                String iden_new=identifier.split("completedAmount_")[1];
+            }
+            else if(identifier.toLowerCase().startsWith("playercompletedamount_")){
+                String iden_new=identifier.split("(?i)playerCompletedAmount_")[1];
                 if(iden_new.contains(",")){
                     String[] args=iden_new.split(",");
                     String category=args[1];
@@ -199,8 +234,9 @@ public class Advancements extends PlaceholderExpansion{
                     Integer amount=amountAdvancements(Bukkit.getPlayer(p.getUniqueId()));
                     return String.valueOf(amount);
                 }
-            }else if(identifier.startsWith("remainingAmount_")){
-                String iden_new=identifier.split("remainingAmount_")[1];
+            }
+            else if(identifier.toLowerCase().startsWith("playerremainingamount_")){
+                String iden_new=identifier.split("(?i)playerRemainingAmount_")[1];
                 if(iden_new.contains(",")){
                     String[] args=iden_new.split(",");
                     String category=args[1];
@@ -230,7 +266,46 @@ public class Advancements extends PlaceholderExpansion{
                     Integer amount=amountAdvancements(Bukkit.getPlayer(p.getUniqueId()),true);
                     return String.valueOf(amount);
                 }
-            }else{
+            }
+            else if(identifier.toLowerCase().startsWith("completedamount")){
+                String iden_new="";
+                boolean alone=true;
+                if(identifier.toLowerCase().startsWith("completedamount_")){
+                    iden_new=identifier.split("(?i)completedAmount_")[1];
+                    alone=false;
+                }
+                if(alone){
+                    Integer amount=amountAdvancements(Bukkit.getPlayer(player.getUniqueId()));
+                    return String.valueOf(amount);
+                }else{
+                    Integer amount=amountAdvancements(Bukkit.getPlayer(player.getUniqueId()),true,iden_new);
+                    if(amount==null){
+                        return "CATEGORY_NOT_FOUND";
+                    }else{
+                        return String.valueOf(amount);
+                    }
+                }
+            }
+            else if(identifier.toLowerCase().startsWith("remainingamount")){
+                String iden_new="";
+                boolean alone=true;
+                if(identifier.toLowerCase().startsWith("remainingamount_")){
+                    iden_new=identifier.split("(?i)remainingAmount_")[1];
+                    alone=false;
+                }
+                if(alone){
+                    Integer amount=amountAdvancements(Bukkit.getPlayer(player.getUniqueId()));
+                    return String.valueOf(amount);
+                }else{
+                    Integer amount=amountAdvancements(Bukkit.getPlayer(player.getUniqueId()),true,iden_new);
+                    if(amount==null){
+                        return "CATEGORY_NOT_FOUND";
+                    }else{
+                        return String.valueOf(amount);
+                    }
+                }
+            }
+            else{
                 Boolean hadv=hasAdvancement((Player)player,identifier);
                 if(hadv==null){
                     return "NO_EXIST_ADVANCEMENT";
@@ -247,7 +322,7 @@ public class Advancements extends PlaceholderExpansion{
         
     }
     public static boolean checkIsPlaceholder(String name){
-        return name.startsWith("{")&&name.endsWith("}");
+        return name.toLowerCase().startsWith("{")&&name.endsWith("}");
     }
     public static String parsePlaceholder(String placeholder,OfflinePlayer player){
         String place=placeholder.replaceAll("\\{","%").replaceAll("\\}","%");
@@ -262,7 +337,7 @@ public class Advancements extends PlaceholderExpansion{
             Advancement adv = iter.next();
             String key=adv.getKey().getKey();
             //Advancement contain too recipes unlocked. Ignored
-            if(!key.startsWith("recipes")){
+            if(!key.toLowerCase().startsWith("recipes")){
                 String parent=key.split("/")[0];
                 if(!categories.contains(parent)){
                     categories.add(parent);
@@ -314,7 +389,7 @@ public class Advancements extends PlaceholderExpansion{
             //Added categories
             boolean isComplete=hasAdvancement(player,key);
             String cat=key.split("/")[0];
-            if(key.startsWith("recipes")){
+            if(key.toLowerCase().startsWith("recipes")){
                 continue;
             }
             if(!categories.contains(cat)){
